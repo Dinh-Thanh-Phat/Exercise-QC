@@ -1,5 +1,7 @@
 **Cài đặt dự án**
+
 **1. Clone Repository:** git clone https://github.com/Dinh-Thanh-Phat/Exercise-QC.git QC-Auto
+
 cd QC-Auto
 
 **2. Cài đặt các Dependencies:** npm install
