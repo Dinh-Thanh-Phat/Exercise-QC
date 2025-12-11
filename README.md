@@ -1,23 +1,19 @@
 **Cài đặt dự án**
 
-**1. Clone Repository:** git clone https://github.com/Dinh-Thanh-Phat/Exercise-QC.git QC-Auto
+1. git clone https://github.com/Dinh-Thanh-Phat/Exercise-QC.git
 
-cd QC-Auto
+2. cd Exercise-QC
 
-**2. Cài đặt các Dependencies:** npm install
+**Cài đặt môi trường**
 
-**3. Cài đặt Browsers:** npx playwright install
+3. npm install 
 
-**Cách chạy Test**
+4. npx playwright install
 
-**1. Chạy tất cả các test:** npx playwright test
+**Chạy test case**
 
-**2. Chạy từng test case riêng:** npx playwright test tests/web.spec.ts
+5. npx playwright test tests/web.spec.ts --project=chromium
 
-**3. Chế độ Headed (Xem giao diện)**: npx playwright test --headed
+**Xem report**
 
-**Xem Báo cáo (Report)**
-
-**1.Chạy test với cấu hình report:** npx playwright test
-
-**2. Mở báo cáo:** npx playwright show-report
+6. npx playwright show-report
