@@ -51,7 +51,7 @@ test('Kiểm tra tạo danh thiếp thành công (Create card successfully)', as
         await page.getByRole('link', { name: 'Danh Thiếp Điện Tử' }).click(); 
         await page.getByRole('link', { name: 'Tạo Danh Thiếp' }).click();
         
-        // Tối ưu hóa: Loại bỏ các lệnh click() và press('Tab') thừa
+        await page.locator('input[name="logo"]').setInputFiles('C:/Users/admin/Pictures/avatar.jpg');
         await page.getByRole('textbox', { name: 'Tên', exact: true }).fill('Phat');
         await page.getByRole('textbox', { name: 'Họ & Tên đệm' }).fill('Dinh Thanh');
         await page.getByRole('textbox', { name: 'Số điện thoại' }).fill('0123456789');
