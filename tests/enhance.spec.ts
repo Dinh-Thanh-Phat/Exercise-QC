@@ -9,7 +9,7 @@ const USER = {
 test('Delete card successfully', async ({ page }) => {
   await login(page);
   await navigateToDashboard(page);
-  await deleteCards(page);
+  await deleteCards(page, 1);
 });
 
 test('Logout successfully with popup handling', async ({ page }) => {
@@ -35,12 +35,16 @@ async function navigateToDashboard(page: Page) {
   await expect(page).toHaveURL(`${BASE_URL}/dashboard`);
 }
 
-async function deleteCards(page: Page) {
+async function deleteCards(page: Page, numberOfCards: number) {
   const deleteButton = page.locator('.bs-pass-para').first();
   const confirmButton = page.getByRole('button', { name: 'Yes' });
-  
-  await deleteButton.click();
-  await confirmButton.click();
+
+  await page.getByRole('link', {name: 'Danh Thiếp Điện Tử'}).click();
+
+  for(let i = 0; i < numberOfCards; i++) {
+    await deleteButton.click();
+    await confirmButton.click()
+  }
 }
 
 async function logoutWithPopupHandling(page: Page) {
