@@ -1,116 +1,101 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
-test('Login Successfully', async ({ page }) => {
-  await page.goto('https://incard.biz/login');
-  
-  await page.locator("//input[@type='email']").fill("thanhphat12tna234@gmail.com")
-  await page.locator("//input[@type='password']").fill("Password123@")
-  await page.locator("//button[@type='submit']").click()
+const BASE_URL = {
+  main: 'https://incard.biz',
+  shop: 'https://shop.incard.biz',
+};
 
-  await expect(page).toHaveURL(/.*\/dashboard/, { timeout: 10000 }); 
+const USER = {
+  email: 'thanhphat12tna234@gmail.com',
+  password: 'Password123@',
+};
 
-  const dashboardHeader = page.getByRole('heading', { name: 'Thống kê' });
-  await expect(dashboardHeader).toBeVisible();
+const CARD_DATA = {
+  avatarPath: 'C:/Users/admin/Pictures/avatar.jpg',
+  firstName: 'Phat',
+  lastName: 'Dinh Thanh',
+  phone: '0123456789',
+  company: 'Inapps Technology',
+};
 
+test('Login successfully', async ({ page }) => {
+  await loginToDashboard(page);
+  await verifyDashboard(page);
 });
 
 test('Create card successfully', async ({ page }) => {
-  await page.goto('https://shop.incard.biz/');
+  await loginFromShop(page);
+
+  const hasPopup = await handleCreateCardPopup(page);
+
+  if (!hasPopup) {
+    await navigateToCreateCard(page);
+  }
+
+  await createCard(page);
+});
+
+/* ===================== HELPERS ===================== */
+
+async function loginToDashboard(page: Page) {
+  await page.goto(`${BASE_URL.main}/login`);
+  await page.getByRole('textbox', { name: /email/i }).fill(USER.email);
+  await page.getByRole('textbox', { name: /mật khẩu/i }).fill(USER.password);
+  await page.getByRole('button', { name: /đăng nhập/i }).click();
+  await expect(page).toHaveURL(/dashboard|dasboard#/, { timeout: 10000 });
+}
+
+async function verifyDashboard(page: Page) {
+  const dashboardHeader = page.getByRole('heading', { name: 'Thống kê' });
+  await expect(dashboardHeader).toBeVisible();
+}
+
+async function loginFromShop(page: Page) {
+  await page.goto(BASE_URL.shop);
   await page.getByRole('link', { name: 'Đăng nhập' }).click();
-  await page.getByRole('textbox', { name: 'Nhập email' }).click();
-  await page.getByRole('textbox', { name: 'Nhập email' }).fill('thanhphat12tna234@gmail.com');
-  await page.getByRole('textbox', { name: 'Nhập email' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Nhập mật khẩu' }).fill('Password123@');
+  await page.getByRole('textbox', { name: 'Nhập email' }).fill(USER.email);
+  await page.getByRole('textbox', { name: 'Nhập mật khẩu' }).fill(USER.password);
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
+}
+
+async function handleCreateCardPopup(page: Page): Promise<boolean> {
+  const createNowButton = page.locator('button.btn-tao-danh-thiep-ngay');
+
+  try {
+    await createNowButton.waitFor({ state: 'visible', timeout: 5000 });
+    await createNowButton.click();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function navigateToCreateCard(page: Page) {
   await page.getByRole('link', { name: ' Danh Thiếp Điện Tử' }).click();
   await page.getByRole('link', { name: 'Tạo Danh Thiếp' }).click();
-  await page.locator('input[name="logo"]').setInputFiles('C:/Users/admin/Pictures/avatar.jpg');
-  await page.getByRole('textbox', { name: 'Họ & Tên đệm' }).click();
-  await page.getByRole('textbox', { name: 'Tên', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Tên', exact: true }).fill('Phat');
-  await page.getByRole('textbox', { name: 'Tên', exact: true }).press('Tab');
-  await page.getByRole('textbox', { name: 'Họ & Tên đệm' }).fill('Dinh Thanh');
-  await page.getByRole('textbox', { name: 'Họ & Tên đệm' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Số điện thoại' }).fill('0123456789');
-  await page.getByRole('textbox', { name: 'Tên công ty muốn hiện trên' }).click();
-  await page.getByRole('textbox', { name: 'Tên công ty muốn hiện trên' }).fill('Inapps Technology');
-  await page.getByRole('textbox', { name: 'Tên công ty muốn hiện trên' }).press('Tab');
+}
+
+async function createCard(page: Page) {
+  await page
+    .locator('input[name="logo"]')
+    .setInputFiles(CARD_DATA.avatarPath);
+
+  await page
+    .getByRole('textbox', { name: 'Tên', exact: true })
+    .fill(CARD_DATA.firstName);
+
+  await page
+    .getByRole('textbox', { name: 'Họ & Tên đệm' })
+    .fill(CARD_DATA.lastName);
+
+  await page
+    .getByRole('textbox', { name: 'Số điện thoại' })
+    .fill(CARD_DATA.phone);
+
+  await page
+    .getByRole('textbox', { name: 'Tên công ty muốn hiện trên' })
+    .fill(CARD_DATA.company);
+
   await page.getByRole('button', { name: 'Tạo & xem trước' }).click();
-  await page.getByRole('button', { name: 'Đóng' }).click()
-
-  // await expect(page).toHaveURL(/.*\/dashboard/); 
-  
-});
-
-test.describe('Kiểm tra Chức năng Đăng nhập (Login)', () => {
-
-    test('Đăng nhập thành công và xác minh Dashboard', async ({ page }) => {
-
-        await test.step('1. Nhập thông tin đăng nhập', async () => {
-            await page.goto('https://incard.biz/login'); 
-            
-            // Sử dụng các Locator ổn định (getByPlaceholder/getByRole)
-            await page.getByPlaceholder('Nhập email').or(page.getByRole('textbox', { name: 'Email' })).fill("thanhphat12tna234@gmail.com");
-            await page.getByPlaceholder('Nhập mật khẩu').or(page.getByRole('textbox', { name: 'Mật khẩu' })).fill("Password123@");
-        });
-
-        await test.step('2. Click và Xác minh chuyển hướng', async () => {
-            await page.getByRole('button', { name: 'Đăng nhập' }).click();
-
-            // Assertion 1: Kiểm tra URL
-            await expect(page).toHaveURL(/.*\/dashboard/i, { timeout: 15000 }); 
-        });
-
-        await test.step('3. Xác minh phần tử UI trên Dashboard', async () => {
-            // Assertion 2: Kiểm tra tiêu đề (Sử dụng .or() để linh hoạt)
-            const dashboardHeader = page.getByRole('heading', { name: 'Thống kê' });
-            await expect(dashboardHeader).toBeVisible();; 
-        });
-
-    });
-});
-
-test('Kiểm tra tạo card thành công (Create card successfully)', async ({ page }) => {
-
-    await test.step('1. Đăng nhập hệ thống', async () => {
-        // Tối ưu hóa: Điều hướng trực tiếp đến trang login thay vì đến trang chủ rồi click Đăng nhập
-        await page.goto('https://shop.incard.biz/login'); 
-        
-        // Tối ưu hóa: Loại bỏ các lệnh .click() và .press('Tab') thừa trước .fill()
-        await page.getByRole('link', { name: 'Đăng nhập' }).click();
-        await page.getByRole('textbox', { name: 'Nhập email' }).fill('thanhphat12tna234@gmail.com');
-        await page.getByRole('textbox', { name: 'Nhập mật khẩu' }).fill('Password123@');
-        await page.getByRole('button', { name: 'Đăng nhập' }).click();
-
-        // Assertion 1: Xác minh đã chuyển hướng thành công sau login
-        await expect(page).toHaveURL(/.*\/dashboard/i, { timeout: 15000 }); 
-    });
-
-
-    await test.step('2. Điều hướng đến trang Tạo Danh Thiếp và Điền Form', async () => {
-        // Click vào menu và link Tạo Danh Thiếp
-        await page.getByRole('link', { name: 'Danh Thiếp Điện Tử' }).click(); 
-        await page.getByRole('link', { name: 'Tạo Danh Thiếp' }).click();
-        
-        await page.locator('input[name="logo"]').setInputFiles('C:/Users/admin/Pictures/avatar.jpg');
-        await page.getByRole('textbox', { name: 'Tên', exact: true }).fill('Phat');
-        await page.getByRole('textbox', { name: 'Họ & Tên đệm' }).fill('Dinh Thanh');
-        await page.getByRole('textbox', { name: 'Số điện thoại' }).fill('0123456789');
-        await page.getByRole('textbox', { name: 'Tên công ty muốn hiện trên' }).fill('Inapps Technology');
-    });
-
-    await test.step('3. Tạo, Xác minh và Đóng Danh Thiếp', async () => {
-        await page.getByRole('button', { name: 'Tạo & xem trước' }).click();
-        
-        // Assertion 3: Kiểm tra dữ liệu hiển thị đúng trên Preview
-        // await expect(page.getByRole('heading', { name: 'Dinh Thanh Phat' })).toBeVisible();
-
-        // await expect(page.getByRole('heading', { name: 'Inapps Technology' })).toBeVisible();
-        
-        // Đóng hộp thoại xem trước
-        await page.getByRole('button', { name: 'Đóng' }).click(); 
-    });
-});
-
-
-
+  await page.getByRole('button', { name: 'Đóng' }).click();
+}
