@@ -18,7 +18,9 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Save auth state
-      run: echo '${{ secrets.PLAYWRIGHT_AUTH }}' > auth.json
+      env:
+        PLAYWRIGHT_AUTH: ${{ secrets.PLAYWRIGHT_AUTH }}
+      run: echo "$PLAYWRIGHT_AUTH" > auth.json
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
