@@ -16,7 +16,7 @@ export default defineConfig({
   reporter: [
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/report.json' }],
-    ['./reporters/excel-reporter.ts'],
+    // ['./reporters/excel-reporter.ts'],
   ],
 
   use: {
