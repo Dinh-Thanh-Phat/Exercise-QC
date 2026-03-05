@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 
 const BASE_URL = {
   main: 'https://incard.biz',
-  shop: 'https://shop.incard.biz',
+  shop: 'https://incard.biz',
 };
 
 const USER = {

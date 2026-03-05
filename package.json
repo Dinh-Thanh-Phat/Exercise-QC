@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:ci": "cross-env CI=true playwright test",
+    "test:docker": "docker run --rm -v ${PWD}/playwright-report:/app/playwright-report -v ${PWD}/test-results:/app/test-results --env-file .env qc-playwright"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -11,6 +18,14 @@
     "@chromatic-com/playwright": "^0.12.8",
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
-    "chromatic": "^13.3.4"
+    "chromatic": "^13.3.4",
+    "cross-env": "^10.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2",
+    "xlsx": "^0.18.5"
   }
 }
