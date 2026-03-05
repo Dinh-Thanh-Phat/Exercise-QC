@@ -42,3 +42,5 @@ logs/
 dist/
 coverage/
 .tmp/
+
+auth.json
