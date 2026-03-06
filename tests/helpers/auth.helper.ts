@@ -6,10 +6,16 @@ export async function loginDashboard(
   email: string,
   password: string
 ) {
-  // Session đã có từ storageState, không cần login lại
   await page.goto(baseUrl);
 
-  await expect(page).toHaveURL(/home/, {
-    timeout: 15000,
-  });
+  // Click "Get Started with LinkedIn"
+  await page.getByRole('button', { name: /linkedin/i }).click();
+
+  // LinkedIn login page
+  await page.locator('#username').fill(email);
+  await page.locator('#password').fill(password);
+  await page.getByRole('button', { name: /sign in/i }).click();
+
+  // Verify redirect về home
+  await expect(page).toHaveURL(/home/, { timeout: 30000 });
 }

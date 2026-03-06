@@ -17,17 +17,11 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Save auth state
-      env:
-        PLAYWRIGHT_AUTH: ${{ secrets.PLAYWRIGHT_AUTH }}
-      run: |
-        echo "$PLAYWRIGHT_AUTH" > auth.json
-        echo "=== auth.json size ==="
-        wc -c auth.json
-        echo "=== first 100 chars ==="
-        head -c 100 auth.json
     - name: Run Playwright tests
-      run: npx playwright test
+      env:
+        LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
+        LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
+      run: npx playwright test --reporter=list
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

@@ -24,7 +24,7 @@ export default defineConfig({
 
     headless: true,
 
-    storageState: 'auth.json',
+    // storageState: 'auth.json',
 
     trace: 'retain-on-failure',
 

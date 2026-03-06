@@ -7,11 +7,17 @@ import { chromium } from '@playwright/test';
 
   await page.goto('https://app.incard.biz/convert-linkedin-profile/');
 
-  // Bạn tự click login thủ công trên browser vừa mở
-  // Đợi cho đến khi URL có chứa /home
+  // Đợi bạn login thủ công
   await page.waitForURL(/home/, { timeout: 60000 });
-  console.log('Login thành công! Đang lưu session...');
-
+  
+  // Chờ thêm 3 giây để đảm bảo tất cả cookie được set
+  await page.waitForTimeout(3000);
+  
+  // Reload lại trang để verify session
+  await page.reload();
+  await page.waitForURL(/home/, { timeout: 10000 });
+  
+  console.log('Login thành công! URL:', page.url());
   await context.storageState({ path: 'auth.json' });
   await browser.close();
   console.log('Đã lưu session vào auth.json');
