@@ -20,7 +20,12 @@ jobs:
     - name: Save auth state
       env:
         PLAYWRIGHT_AUTH: ${{ secrets.PLAYWRIGHT_AUTH }}
-      run: echo "$PLAYWRIGHT_AUTH" > auth.json
+      run: |
+        echo "$PLAYWRIGHT_AUTH" > auth.json
+        echo "=== auth.json size ==="
+        wc -c auth.json
+        echo "=== first 100 chars ==="
+        head -c 100 auth.json
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
