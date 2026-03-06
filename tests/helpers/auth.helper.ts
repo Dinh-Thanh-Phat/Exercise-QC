@@ -9,7 +9,9 @@ export async function loginDashboard(
   await page.goto(baseUrl);
 
   // Click "Get Started with LinkedIn"
-  await page.getByRole('button', { name: /linkedin/i }).click();
+  const linkedinBtn = page.locator('button:has-text("Get Started with LinkedIn")');
+  await linkedinBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await linkedinBtn.click();
 
   // LinkedIn login page
   await page.locator('#username').fill(email);
