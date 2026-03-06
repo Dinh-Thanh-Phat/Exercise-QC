@@ -8,6 +8,8 @@ export async function loginDashboard(
 ) {
   await page.goto(baseUrl);
 
+  await page.locator("//button[@class='text-[#527063] hover:text-primary font-medium text-xs sm:text-sm transition-colors']").click()
+
   // Click "Get Started with LinkedIn"
   const linkedinBtn = page.locator('button:has-text("Get Started with LinkedIn")');
   await linkedinBtn.waitFor({ state: 'visible', timeout: 15000 });
